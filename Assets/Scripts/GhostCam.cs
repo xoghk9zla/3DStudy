@@ -12,13 +12,32 @@ public class GhostCam : MonoBehaviour
     void Start()
     {
         rotateValue = transform.rotation.eulerAngles;
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
+        CheckMouse();
+
         Moving();
         Rotating();
+    }
+
+    private void CheckMouse()
+    {
+        if(Input.GetKeyDown(KeyCode.Tab)) 
+        {
+            if (Cursor.lockState == CursorLockMode.None)
+            {
+                Cursor.lockState = CursorLockMode.Locked;   // 마우스가 보이지 않도록, 항상 마우스는 화면의 가운데 존재
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+        }        
     }
 
     private void Moving()
@@ -26,35 +45,35 @@ public class GhostCam : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             transform.position +=
-                //transform.forward *mouseMoveSpeed * Time.deltaTime;
+                transform.forward *mouseMoveSpeed * Time.deltaTime;
                 //transform.rotation * Vector3.forward * mouseMoveSpeed * Time.deltaTime;
                 //transform.TransformDirection(Vector3.forward) * mouseMoveSpeed * Time.deltaTime;
-                Vector3.forward * mouseMoveSpeed * Time.deltaTime;
+                //Vector3.forward * mouseMoveSpeed * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.S))
         {
             transform.position +=
-                //-transform.forward * mouseMoveSpeed * Time.deltaTime;
+                -transform.forward * mouseMoveSpeed * Time.deltaTime;
                 //transform.rotation * Vector3.back * mouseMoveSpeed * Time.deltaTime;
                 //transform.TransformDirection(Vector3.back) * mouseMoveSpeed * Time.deltaTime;
-                Vector3.back * mouseMoveSpeed * Time.deltaTime;
+                //Vector3.back * mouseMoveSpeed * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
             transform.position +=
-                //transform.right * mouseMoveSpeed * Time.deltaTime;
+                transform.right * mouseMoveSpeed * Time.deltaTime;
                 //transform.rotation * Vector3.left * mouseMoveSpeed * Time.deltaTime;
                 //transform.TransformDirection(Vector3.left) * mouseMoveSpeed * Time.deltaTime;
-                Vector3.left * mouseMoveSpeed * Time.deltaTime;
+                //Vector3.left * mouseMoveSpeed * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.D))
         {
             transform.position +=
-                //-transform.right * mouseMoveSpeed * Time.deltaTime;
+                -transform.right * mouseMoveSpeed * Time.deltaTime;
                 //transform.rotation * Vector3.right * mouseMoveSpeed * Time.deltaTime;
                 //transform.TransformDirection(Vector3.right) * mouseMoveSpeed * Time.deltaTime;
-                Vector3.right * mouseMoveSpeed * Time.deltaTime;
+                //Vector3.right * mouseMoveSpeed * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.Space))
@@ -75,6 +94,19 @@ public class GhostCam : MonoBehaviour
         float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         rotateValue += new Vector3(-mouseY, mouseX);
+
+        /*
+        if(rotateValue.x > 90.0f)
+        {
+            rotateValue.x = 90.0f;
+        }
+        else if(rotateValue.x < -90.0f)
+        {
+            rotateValue.x = -90.0f;
+        }
+        */
+        rotateValue.x = Mathf.Clamp(rotateValue.x, -90.0f, 90.0f);
+
         transform.rotation = Quaternion.Euler(rotateValue);
     }
 
