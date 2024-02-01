@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public enum Cams
@@ -14,6 +15,21 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField] List<Camera> listCam;
     [SerializeField] List<Button> listBtn;
+
+    [SerializeField] bool forTest;
+
+    private UnityAction _action = null;
+    public UnityAction Action { set => _action = value; }
+
+    public void AddAction(UnityAction _addAction)
+    {
+        _action += _addAction;
+    }
+
+    public void RemoveAction(UnityAction _removeAction)
+    {
+        _action -= _removeAction;
+    }
 
     private void Awake()
     {
@@ -50,6 +66,7 @@ public class CameraManager : MonoBehaviour
         listBtn[2].onClick.AddListener(()=>SwitchCamera(2));
         listBtn[3].onClick.AddListener(()=>SwitchCamera(3));
 
+        /*
         // 람다식 for문을 만났을 때 조건이 되는 변수가 계속 변하게 하는게
         // 그 변하는 데이터의 주소를 계속 전달하기 때문에 문제를 야기
         int count = listCam.Count;
@@ -58,6 +75,7 @@ public class CameraManager : MonoBehaviour
             int num = i;
             listBtn[num].onClick.AddListener(() => SwitchCamera(num));
         }
+        */        
     }
 
     // Update is called once per frame
@@ -78,6 +96,20 @@ public class CameraManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SwitchCamera(3);
+        }
+
+        if (forTest == true)
+        {
+            forTest = false;
+
+            if (_action == null)
+            {
+                Debug.Log("저는 아무런 액션도 가지고 있지 않습니다.");
+            }
+            else
+            {
+                _action.Invoke();
+            }
         }
     }
 
