@@ -6,7 +6,7 @@ public class RigidBodyPlayer : MonoBehaviour
 {
     private float gravity = 9.81f;
     private float verticalVelocity = 0.0f;
-    [SerializeField] private bool isGround = false;
+    private bool isGround = false;
     private bool isJump = false;
     private Vector3 moveDir;
     private Rigidbody rigid;
@@ -18,12 +18,15 @@ public class RigidBodyPlayer : MonoBehaviour
 
     private Vector2 rotateValue;
 
+    private Transform trsCam;
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         cap = GetComponent<CapsuleCollider>();
+        trsCam = transform.GetChild(0);
+        //trsCam = trsCam.Find("Main Camera");
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -31,23 +34,57 @@ public class RigidBodyPlayer : MonoBehaviour
         Moving();
         Jumping();
         CheckGravity();
-
+        Rotation();
     }
 
     private void CheckGround()
     {
-        if(rigid.velocity.y < 0.0f)
+        if (rigid.velocity.y < 0.0f)
         {
             isGround = Physics.Raycast(transform.position, Vector3.down, cap.height * 0.55f, LayerMask.GetMask("Ground"));
+        }
+        else if (rigid.velocity.y > 0.0f)
+        {
+            isGround = false;
         }
     }
 
     private void Moving()
     {
-        moveDir.x = Input.GetAxisRaw("Horizontal");
-        moveDir.z = Input.GetAxisRaw("Vertical");
+        /*
+        moveDir.x = InputHorizontal();
+        moveDir.z = InputVertical();      
         
-        rigid.velocity = transform.rotation * moveDir * moveSpeed;
+        moveDir.y = rigid.velocity.y;
+        
+        rigid.velocity = transform.rotation * moveDir;
+        */
+        if (Input.GetKey(KeyCode.W))
+        {
+            rigid.AddForce(new Vector3(0.0f, 0.0f, moveSpeed), ForceMode.Force);
+        }        
+        else if (Input.GetKey(KeyCode.S))
+        {
+            rigid.AddForce(new Vector3(0.0f, 0.0f, -moveSpeed), ForceMode.Force);
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            rigid.AddForce(new Vector3(-moveSpeed, 0.0f, 0.0f), ForceMode.Force);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            rigid.AddForce(new Vector3(moveSpeed, 0.0f, 0.0f), ForceMode.Force);
+        }
+    }
+
+    private float InputHorizontal()
+    {
+        return Input.GetAxisRaw("Horizontal") * moveSpeed;
+    }
+
+    private float InputVertical()
+    {
+        return Input.GetAxisRaw("Vertical") * moveSpeed;
     }
 
     private void Jumping()
@@ -65,21 +102,23 @@ public class RigidBodyPlayer : MonoBehaviour
 
     private void CheckGravity()
     {
-        if (isGround)
-        {
-            verticalVelocity = 0.0f;
-        }
-
         if(isJump)
         {
             isJump = false;
-            verticalVelocity = jumpForce;
-        }
-        else
-        {
-            verticalVelocity -= gravity * Time.deltaTime;
-        }
+            rigid.AddForce(new Vector3(0.0f, jumpForce), ForceMode.Impulse);
+        }        
+    }
 
-        rigid.velocity = new Vector3(rigid.velocity.x, verticalVelocity, rigid.velocity.z);
+    private void Rotation()
+    {
+        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitvity * Time.deltaTime;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitvity * Time.deltaTime;
+
+        rotateValue += new Vector2(-mouseY, mouseX);
+
+        rotateValue.x = Mathf.Clamp(rotateValue.x, -90.0f, 90.0f);
+
+        transform.rotation = Quaternion.Euler(new Vector2(0.0f, rotateValue.y));
+        trsCam.rotation = Quaternion.Euler(new Vector2(rotateValue.x, rotateValue.y));  // 캐릭터 회전만큼 카메라도 따라가야함
     }
 }
