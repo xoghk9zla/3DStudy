@@ -19,6 +19,9 @@ public class CharControllerPlayer : MonoBehaviour
     [SerializeField] private bool isSlope = false;
     private Vector3 slopeVelocity;
 
+    [SerializeField] private GameObject cam3rd;
+    [SerializeField] private GameObject cam1st;
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -38,6 +41,7 @@ public class CharControllerPlayer : MonoBehaviour
         Jumping();
         CheckGravity();
         CheckSlop();
+        CheckDetail();
     }
 
     private void CheckMouseLock()
@@ -147,6 +151,20 @@ public class CharControllerPlayer : MonoBehaviour
             {
                 isSlope = false;
             }
+        }
+    }
+
+    private void CheckDetail()
+    {
+        if(Input.GetMouseButton(1) && cam1st.activeSelf == false)
+        {
+            cam1st.SetActive(true);
+            cam3rd.SetActive(false);
+        }
+        else if(!Input.GetMouseButton(1)&& cam3rd.activeSelf == false)
+        {
+            cam1st.SetActive(false);
+            cam3rd.SetActive(true);
         }
     }
 }
