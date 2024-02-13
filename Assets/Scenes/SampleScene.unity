@@ -159,7 +159,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 25, y: 25}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &38907209
 MonoBehaviour:
@@ -603,6 +603,7 @@ MonoBehaviour:
   trsMuzzle: {fileID: 931960127}
   trsDynamic: {fileID: 586251226}
   gunForce: 100
+  isGrenade: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

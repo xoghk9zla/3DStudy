@@ -11,7 +11,7 @@ public class BulletController : MonoBehaviour
     
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.layer == LayerMask.GetMask("Ground"))
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             Destroy(gameObject);
         }
